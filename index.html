@@ -128,40 +128,50 @@
     };
 
     async function startUpload() {
-      const fileInput = document.getElementById('fileInput');
-      if (fileInput.files.length === 0) {
-        alert("写真を撮影してください");
-        return;
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput.files.length === 0) {
+    alert("写真を撮影してください");
+    return;
+  }
+
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('loading').style.display = 'block';
+
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64Data = e.target.result;
+    const surveyData = {
+      userId: userId,
+      residual: document.getElementById('residual').value,
+      delivery: document.getElementById('delivery').value,
+      request: document.getElementById('request').value
+    };
+
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxWOjnpLNXYWsbPYSsJdrojtX7bofY_bRhVKRZLQqC5wlGocXRnGft3q9Z3VPT3GQAO/exec";
+
+    try {
+      const res = await fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({ base64Data: base64Data, survey: surveyData })
+      });
+      const result = await res.json();
+      if (result.result === "success") {
+        document.getElementById('mainForm').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+      } else {
+        alert("送信エラー: " + result.message);
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('loading').style.display = 'none';
       }
-
-      document.getElementById('submitBtn').disabled = true;
-      document.getElementById('loading').style.display = 'block';
-
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const base64Data = e.target.result;
-        const surveyData = {
-          userId: userId,
-          residual: document.getElementById('residual').value,
-          delivery: document.getElementById('delivery').value,
-          request: document.getElementById('request').value
-        };
-
-        google.script.run
-          .withSuccessHandler(function() {
-            document.getElementById('mainForm').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'block';
-          })
-          .withFailureHandler(function(err) {
-            alert("送信エラー: " + err);
-            document.getElementById('submitBtn').disabled = false;
-            document.getElementById('loading').style.display = 'none';
-          })
-          .processSubmission(base64Data, surveyData);
-      };
-      reader.readAsDataURL(file);
+    } catch (err) {
+      alert("通信エラー: " + err);
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('loading').style.display = 'none';
     }
+  };
+  reader.readAsDataURL(file);
+}
 
     // 実行開始
     loadLiffSdk();
