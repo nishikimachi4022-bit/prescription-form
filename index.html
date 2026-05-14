@@ -288,6 +288,7 @@
 
     // ---------- 送信 ----------
     async function startUpload() {
+      alert("userId: " + userId); // ★追加・確認後に削除
       if (images.length === 0) {
         alert("写真を撮影してください");
         return;
