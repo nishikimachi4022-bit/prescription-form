@@ -50,8 +50,9 @@
     .caution-text { font-size: 11px; color: #dc3545; margin-bottom: 8px; background: #fff3f3; padding: 6px 10px; border-radius: 6px; }
 
     /* 送信ボタン */
-    .btn-submit { background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; }
+    .btn-submit { background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; display: none; }
     .btn-submit:disabled { background: #adb5bd; cursor: not-allowed; }
+    #loadingUser { text-align: center; color: #888; font-size: 13px; margin-top: 8px; }
     #loading { display: none; text-align: center; color: #007bff; font-weight: bold; margin-top: 12px; font-size: 14px; }
 
     /* 完了画面 */
@@ -142,6 +143,10 @@
 
         </div>
 
+        <!-- 読み込み中テキスト（userId取得完了まで表示） -->
+        <p id="loadingUser">⏳ 読み込み中...</p>
+
+        <!-- 送信ボタン（userId取得完了後に表示） -->
         <button id="submitBtn" class="btn-submit" onclick="startUpload()" disabled>送信する</button>
         <div id="loading">送信中...しばらくお待ちください</div>
       </div>
@@ -157,7 +162,7 @@
     const MY_LIFF_ID = "2008268085-RVzk6eNO";
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxWOjnpLNXYWsbPYSsJdrojtX7bofY_bRhVKRZLQqC5wlGocXRnGft3q9Z3VPT3GQAO/exec";
     let userId = "";
-    let images = []; // {base64, file}
+    let images = [];
     let currentSlide = 0;
 
     // ---------- LIFF ----------
@@ -165,7 +170,10 @@
       const s = document.createElement('script');
       s.src = "https://static.line-scdn.net/liff/edge/2/sdk.js";
       s.onload = initLiff;
-      s.onerror = function() { console.error("SDK読み込み失敗"); };
+      s.onerror = function() {
+        document.getElementById('loadingUser').textContent =
+          "読み込みに失敗しました。画面を閉じて再度お試しください。";
+      };
       document.body.appendChild(s);
     }
 
@@ -177,11 +185,18 @@
           } else {
             return liff.getProfile().then(function(profile) {
               userId = profile.userId;
+              // ★userId取得完了後にボタンを表示
+              document.getElementById('loadingUser').style.display = 'none';
+              document.getElementById('submitBtn').style.display = 'block';
               document.getElementById('submitBtn').disabled = false;
             });
           }
         })
-        .catch(function(err) { console.error("LIFF初期化失敗:", err); });
+        .catch(function(err) {
+          console.error("LIFF初期化失敗:", err);
+          document.getElementById('loadingUser').textContent =
+            "読み込みに失敗しました。画面を閉じて再度お試しください。";
+        });
     }
 
     // ---------- 画像追加 ----------
@@ -209,7 +224,6 @@
       }
       wrap.style.display = 'block';
 
-      // スライド生成
       const badges = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
       track.innerHTML = images.map(function(img, i) {
         return `<div class="carousel-slide">
@@ -219,7 +233,6 @@
         </div>`;
       }).join('');
 
-      // ドット生成
       dots.innerHTML = images.map(function(_, i) {
         return `<div class="dot ${i === currentSlide ? 'active' : ''}" onclick="goToSlide(${i})"></div>`;
       }).join('');
@@ -288,7 +301,10 @@
 
     // ---------- 送信 ----------
     async function startUpload() {
-      alert("userId: " + userId); // ★追加・確認後に削除
+      if (!userId) {
+        alert("ユーザー情報の取得中です。少しお待ちください。");
+        return;
+      }
       if (images.length === 0) {
         alert("写真を撮影してください");
         return;
@@ -296,7 +312,6 @@
       document.getElementById('submitBtn').disabled = true;
       document.getElementById('loading').style.display = 'block';
 
-      // 残薬データ収集
       const residualItems = Array.from(document.querySelectorAll('.residual-item')).map(function(item) {
         return {
           name: item.querySelector('[name="medName"]').value,
