@@ -23,8 +23,9 @@
       overflow: hidden;
     }
 
+    /* ★黄緑→青緑グラデーション */
     .header {
-      background: linear-gradient(135deg, #28a745, #20c997);
+      background: linear-gradient(135deg, #8bc34a, #00acc1);
       padding: 20px;
       text-align: center;
     }
@@ -33,6 +34,7 @@
       font-size: 1.05em;
       font-weight: bold;
       letter-spacing: 0.05em;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
 
     .body { padding: 20px; }
@@ -73,9 +75,9 @@
     .policy-box h3 {
       font-size: 12px;
       font-weight: bold;
-      color: #28a745;
+      color: #00897b;
       margin: 12px 0 4px;
-      border-left: 3px solid #28a745;
+      border-left: 3px solid #00acc1;
       padding-left: 7px;
     }
     .policy-box h3:first-child { margin-top: 0; }
@@ -97,7 +99,7 @@
     }
 
     .policy-box a {
-      color: #28a745;
+      color: #00897b;
       word-break: break-all;
     }
 
@@ -106,7 +108,7 @@
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      background: #f0fff4;
+      background: #f1f8f5;
       border: 1.5px solid #b2dfdb;
       border-radius: 10px;
       padding: 12px;
@@ -116,7 +118,7 @@
       width: 20px;
       height: 20px;
       margin-top: 1px;
-      accent-color: #28a745;
+      accent-color: #00acc1;
       flex-shrink: 0;
       cursor: pointer;
     }
@@ -128,8 +130,9 @@
       user-select: none;
     }
 
+    /* ★黄緑→青緑グラデーション */
     .btn-agree {
-      background: linear-gradient(135deg, #28a745, #20c997);
+      background: linear-gradient(135deg, #8bc34a, #00acc1);
       color: white;
       padding: 16px;
       border: none;
@@ -139,9 +142,11 @@
       cursor: pointer;
       width: 100%;
       transition: opacity 0.2s;
+      box-shadow: 0 3px 10px rgba(0, 172, 193, 0.25);
     }
     .btn-agree:disabled {
       background: #adb5bd;
+      box-shadow: none;
       cursor: not-allowed;
     }
     .btn-agree:not(:disabled):active { opacity: 0.85; }
@@ -149,7 +154,7 @@
     #loading {
       display: none;
       text-align: center;
-      color: #28a745;
+      color: #00acc1;
       font-weight: bold;
       margin-top: 12px;
       font-size: 14px;
@@ -162,7 +167,7 @@
       margin-top: 14px;
       line-height: 1.6;
     }
-    .external-note a { color: #28a745; }
+    .external-note a { color: #00897b; }
   </style>
 </head>
 <body>
@@ -252,26 +257,18 @@
   </div>
 
   <script>
-    // ======================================================
-    // 設定
-    // ======================================================
     const MY_LIFF_ID  = "2008268085-RVzk6eNO";
     const GAS_URL     = "https://script.google.com/macros/s/AKfycbxWOjnpLNXYWsbPYSsJdrojtX7bofY_bRhVKRZLQqC5wlGocXRnGft3q9Z3VPT3GQAO/exec";
     const POLICY_VER  = "2025-05";
     const FORM_URL    = "./index.html";
 
-    let userId  = "";
+    let userId = "";
 
-    // ======================================================
-    // LIFF初期化
-    // ======================================================
     function loadLiffSdk() {
       const s = document.createElement('script');
       s.src = "https://static.line-scdn.net/liff/edge/2/sdk.js";
       s.onload = initLiff;
-      s.onerror = function() {
-        console.error("SDK読み込み失敗");
-      };
+      s.onerror = function() { console.error("SDK読み込み失敗"); };
       document.body.appendChild(s);
     }
 
@@ -290,9 +287,6 @@
       });
     }
 
-    // ======================================================
-    // 同意済みチェック
-    // ======================================================
     function checkAlreadyConsented(uid) {
       fetch(GAS_URL + "?action=checkConsent&userId=" + encodeURIComponent(uid) + "&version=" + POLICY_VER)
         .then(function(r) { return r.json(); })
@@ -301,22 +295,14 @@
             location.href = FORM_URL;
           }
         })
-        .catch(function() {
-          // チェック失敗時はこの画面を表示したまま
-        });
+        .catch(function() {});
     }
 
-    // ======================================================
-    // ★チェックボックスの変化でボタンの有効/無効を切り替え
-    // ======================================================
     function onCheckChange() {
       const cb = document.getElementById('agreeCheck');
       document.getElementById('agreeBtn').disabled = !cb.checked;
     }
 
-    // ======================================================
-    // 同意送信
-    // ======================================================
     async function submitConsent() {
       if (!userId) {
         alert("ユーザー情報の取得中です。少しお待ちください。");
