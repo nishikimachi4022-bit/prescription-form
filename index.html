@@ -9,8 +9,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif; background: #f0f4f8; min-height: 100vh; padding: 16px; }
     .container { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 420px; margin: 0 auto; overflow: hidden; }
-    .header { background: linear-gradient(135deg, #28a745, #20c997); padding: 20px; text-align: center; }
-    .header h2 { color: white; font-size: 1.1em; font-weight: bold; letter-spacing: 0.05em; }
+
+    /* ★黄緑→青緑グラデーション */
+    .header { background: linear-gradient(135deg, #8bc34a, #00acc1); padding: 20px; text-align: center; }
+    .header h2 { color: white; font-size: 1.1em; font-weight: bold; letter-spacing: 0.05em; text-shadow: 0 1px 3px rgba(0,0,0,0.15); }
     .body { padding: 20px; }
 
     /* カメラボタン */
@@ -30,7 +32,7 @@
     .carousel-next { right: 6px; }
     .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
     .dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; cursor: pointer; transition: background 0.2s; }
-    .dot.active { background: #28a745; }
+    .dot.active { background: #00acc1; }
 
     /* アンケート */
     .survey-group { margin-bottom: 16px; }
@@ -41,29 +43,29 @@
     }
     select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
     textarea { height: 70px; resize: vertical; }
-    .detail-area { display: none; margin-top: 10px; background: #f8f9fa; border-radius: 8px; padding: 12px; border-left: 3px solid #28a745; }
+    .detail-area { display: none; margin-top: 10px; background: #f8f9fa; border-radius: 8px; padding: 12px; border-left: 3px solid #00acc1; }
     .detail-area.open { display: block; }
     .residual-item { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
     .residual-item input { flex: 1; }
     .btn-remove-item { background: #dc3545; color: white; border: none; border-radius: 6px; width: 26px; height: 26px; font-size: 14px; cursor: pointer; flex-shrink: 0; }
-    .add-btn { background: #e8f5e9; color: #28a745; border: 1.5px dashed #28a745; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 4px; }
+    .add-btn { background: #e8f5e9; color: #00897b; border: 1.5px dashed #00acc1; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 4px; }
     .caution-text { font-size: 11px; color: #dc3545; margin-bottom: 8px; background: #fff3f3; padding: 6px 10px; border-radius: 6px; }
 
-    /* 送信ボタン */
-    .btn-submit { background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; }
-    .btn-submit:disabled { background: #adb5bd; cursor: not-allowed; }
-    #loading { display: none; text-align: center; color: #007bff; font-weight: bold; margin-top: 12px; font-size: 14px; }
+    /* ★黄緑→青緑グラデーション */
+    .btn-submit { background: linear-gradient(135deg, #8bc34a, #00acc1); color: white; padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; box-shadow: 0 3px 10px rgba(0, 172, 193, 0.25); }
+    .btn-submit:disabled { background: #adb5bd; box-shadow: none; cursor: not-allowed; }
+    #loading { display: none; text-align: center; color: #00acc1; font-weight: bold; margin-top: 12px; font-size: 14px; }
 
     /* 完了画面 */
     #successMessage { display: none; text-align: center; padding: 40px 20px; }
-    #successMessage h2 { color: #28a745; font-size: 1.3em; margin-bottom: 12px; }
+    #successMessage h2 { color: #00897b; font-size: 1.3em; margin-bottom: 12px; }
     #successMessage p { color: #555; font-size: 14px; line-height: 1.7; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h2>📋 処方箋送信フォーム</h2>
+      <h2>処方箋送信フォーム</h2>
     </div>
 
     <div class="body">
@@ -71,7 +73,7 @@
 
         <!-- カメラ -->
         <input type="file" id="fileInput" accept="image/*" capture="environment" multiple style="display:none">
-        <button class="btn-camera" onclick="document.getElementById('fileInput').click()">📸 処方箋を撮影・追加する</button>
+        <button class="btn-camera" onclick="document.getElementById('fileInput').click()">処方箋を撮影・追加する</button>
 
         <!-- カルーセル -->
         <div class="carousel-wrap" id="carouselWrap">
@@ -110,7 +112,7 @@
             <select id="delivery" onchange="toggleDeliveryArea()">
               <option value="希望なし（薬局で受け取る）">希望なし（薬局で受け取る）</option>
               <option value="自宅へ配達希望（当日）">自宅へ配達希望（当日）</option>
-              <option value="自宅へ配達希望（翌日以降）">自宅へ配達希告（翌日以降）</option>
+              <option value="自宅へ配達希望（翌日以降）">自宅へ配達希望（翌日以降）</option>
             </select>
             <div id="deliveryDetailArea" class="detail-area">
               <div id="nextDayArea" style="display:none; margin-bottom:10px;">
@@ -160,7 +162,6 @@
     let images = [];
     let currentSlide = 0;
 
-    // ---------- LIFF ----------
     function loadLiffSdk() {
       const s = document.createElement('script');
       s.src = "https://static.line-scdn.net/liff/edge/2/sdk.js";
@@ -184,7 +185,6 @@
         .catch(function(err) { console.error("LIFF初期化失敗:", err); });
     }
 
-    // ---------- 画像追加 ----------
     document.getElementById('fileInput').onchange = function(e) {
       const files = Array.from(e.target.files);
       files.forEach(function(file) {
@@ -202,13 +202,8 @@
       const track = document.getElementById('carouselTrack');
       const dots = document.getElementById('carouselDots');
       const wrap = document.getElementById('carouselWrap');
-
-      if (images.length === 0) {
-        wrap.style.display = 'none';
-        return;
-      }
+      if (images.length === 0) { wrap.style.display = 'none'; return; }
       wrap.style.display = 'block';
-
       const badges = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
       track.innerHTML = images.map(function(img, i) {
         return `<div class="carousel-slide">
@@ -217,11 +212,9 @@
           <button class="btn-delete" onclick="deleteImage(${i})">×</button>
         </div>`;
       }).join('');
-
       dots.innerHTML = images.map(function(_, i) {
         return `<div class="dot ${i === currentSlide ? 'active' : ''}" onclick="goToSlide(${i})"></div>`;
       }).join('');
-
       goToSlide(Math.min(currentSlide, images.length - 1));
     }
 
@@ -244,19 +237,15 @@
       renderCarousel();
     }
 
-    // ---------- アンケート ----------
     function toggleArea(selectId, areaId) {
       const val = document.getElementById(selectId).value;
-      const area = document.getElementById(areaId);
-      area.classList.toggle('open', val !== 'なし');
+      document.getElementById(areaId).classList.toggle('open', val !== 'なし');
     }
 
     function toggleDeliveryArea() {
       const val = document.getElementById('delivery').value;
-      const area = document.getElementById('deliveryDetailArea');
-      const nextDay = document.getElementById('nextDayArea');
-      area.classList.toggle('open', val !== '希望なし（薬局で受け取る）');
-      nextDay.style.display = val === '自宅へ配達希望（翌日以降）' ? 'block' : 'none';
+      document.getElementById('deliveryDetailArea').classList.toggle('open', val !== '希望なし（薬局で受け取る）');
+      document.getElementById('nextDayArea').style.display = val === '自宅へ配達希望（翌日以降）' ? 'block' : 'none';
     }
 
     function toggleDeliveryTimeInput() {
@@ -284,12 +273,8 @@
       if (items.length > 1) btn.parentElement.remove();
     }
 
-    // ---------- 送信 ----------
     async function startUpload() {
-      if (images.length === 0) {
-        alert("写真を撮影してください");
-        return;
-      }
+      if (images.length === 0) { alert("写真を撮影してください"); return; }
       document.getElementById('submitBtn').disabled = true;
       document.getElementById('loading').style.display = 'block';
 
