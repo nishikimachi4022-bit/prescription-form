@@ -272,20 +272,30 @@
       document.body.appendChild(s);
     }
 
-    function initLiff() {
-      liff.init({ liffId: MY_LIFF_ID }).then(function() {
-        if (!liff.isLoggedIn()) {
-          liff.login();
-        } else {
-          liff.getProfile().then(function(profile) {
-            userId = profile.userId;
-            checkAlreadyConsented(userId);
-          });
-        }
-      }).catch(function(err) {
-        console.error("LIFF初期化失敗:", err);
+   function initLiff() {
+  liff.init({ liffId: MY_LIFF_ID }).then(function() {
+
+    Logger.log("ここは使えない");
+
+    if (!liff.isLoggedIn()) {
+      liff.login();
+    } else {
+
+      liff.getProfile().then(function(profile) {
+
+        document.body.insertAdjacentHTML(
+          "beforeend",
+          "<div style='position:fixed;bottom:0;background:#fff;padding:10px;'>"
+          + profile.userId +
+          "</div>"
+        );
+
+        userId = profile.userId;
+        checkAlreadyConsented(userId);
       });
     }
+  });
+}
 
     function checkAlreadyConsented(uid) {
       fetch(GAS_URL + "?action=checkConsent&userId=" + encodeURIComponent(uid) + "&version=" + POLICY_VER)
