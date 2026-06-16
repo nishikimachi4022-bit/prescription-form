@@ -9,17 +9,11 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif; background: #f0f4f8; min-height: 100vh; padding: 16px; }
     .container { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 420px; margin: 0 auto; overflow: hidden; }
-
-    /* 黄緑→青緑グラデーション */
     .header { background: linear-gradient(135deg, #8bc34a, #00acc1); padding: 20px; text-align: center; }
     .header h2 { color: white; font-size: 1.1em; font-weight: bold; letter-spacing: 0.05em; text-shadow: 0 1px 3px rgba(0,0,0,0.15); }
     .body { padding: 20px; }
-
-    /* カメラボタン */
     .btn-camera { display: flex; align-items: center; justify-content: center; gap: 8px; background: #007bff; color: white; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 16px; }
     .btn-camera:active { background: #0056b3; }
-
-    /* カルーセル */
     .carousel-wrap { position: relative; margin-bottom: 16px; display: none; }
     .carousel-viewport { overflow: hidden; border-radius: 10px; background: #000; position: relative; height: 200px; }
     .carousel-track { display: flex; transition: transform 0.3s ease; height: 100%; }
@@ -33,8 +27,6 @@
     .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
     .dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; cursor: pointer; transition: background 0.2s; }
     .dot.active { background: #00acc1; }
-
-    /* アンケート */
     .survey-group { margin-bottom: 16px; }
     .survey-label { font-weight: bold; font-size: 13px; color: #333; display: block; margin-bottom: 6px; }
     select, input[type="text"], input[type="date"], textarea {
@@ -50,13 +42,12 @@
     .btn-remove-item { background: #dc3545; color: white; border: none; border-radius: 6px; width: 26px; height: 26px; font-size: 14px; cursor: pointer; flex-shrink: 0; }
     .add-btn { background: #e8f5e9; color: #00897b; border: 1.5px dashed #00acc1; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 4px; }
     .caution-text { font-size: 11px; color: #dc3545; margin-bottom: 8px; background: #fff3f3; padding: 6px 10px; border-radius: 6px; }
-
-    /* 送信ボタン */
+    .time-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .time-row select { flex: 1; }
+    .time-sep { font-size: 13px; color: #555; white-space: nowrap; }
     .btn-submit { background: linear-gradient(135deg, #8bc34a, #00acc1); color: white; padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; box-shadow: 0 3px 10px rgba(0, 172, 193, 0.25); }
     .btn-submit:disabled { background: #adb5bd; box-shadow: none; cursor: not-allowed; }
     #loading { display: none; text-align: center; color: #00acc1; font-weight: bold; margin-top: 12px; font-size: 14px; }
-
-    /* 完了画面 */
     #successMessage { display: none; text-align: center; padding: 40px 20px; }
     #successMessage h2 { color: #00897b; font-size: 1.3em; margin-bottom: 12px; }
     #successMessage p { color: #555; font-size: 14px; line-height: 1.7; }
@@ -71,11 +62,9 @@
     <div class="body">
       <div id="mainForm">
 
-        <!-- カメラ -->
         <input type="file" id="fileInput" accept="image/*" capture="environment" multiple style="display:none">
         <button class="btn-camera" onclick="document.getElementById('fileInput').click()">📸 処方箋を撮影・追加する</button>
 
-        <!-- カルーセル -->
         <div class="carousel-wrap" id="carouselWrap">
           <div class="carousel-viewport">
             <div class="carousel-track" id="carouselTrack"></div>
@@ -85,7 +74,6 @@
           <div class="carousel-dots" id="carouselDots"></div>
         </div>
 
-        <!-- アンケート -->
         <div id="questionnaire">
 
           <div class="survey-group">
@@ -124,9 +112,55 @@
               <select id="deliveryTimeSelect" onchange="toggleDeliveryTimeInput()">
                 <option value="午前中">午前中</option>
                 <option value="午後">午後</option>
-                <option value="希望の時間帯がある方">希望の時間帯がある方</option>
+                <option value="時間帯を指定する">時間帯を指定する</option>
               </select>
-              <input type="text" id="deliveryTimeInput" style="display:none; margin-top:8px;" placeholder="例：10:00〜11:00など">
+              <div id="deliveryTimeInput" style="display:none; margin-top:8px;">
+                <div class="time-row">
+                  <select id="timeFrom">
+                    <option value="8:00">8:00</option>
+                    <option value="8:30">8:30</option>
+                    <option value="9:00">9:00</option>
+                    <option value="9:30">9:30</option>
+                    <option value="10:00">10:00</option>
+                    <option value="10:30">10:30</option>
+                    <option value="11:00">11:00</option>
+                    <option value="11:30">11:30</option>
+                    <option value="12:00">12:00</option>
+                    <option value="12:30">12:30</option>
+                    <option value="13:00">13:00</option>
+                    <option value="13:30">13:30</option>
+                    <option value="14:00">14:00</option>
+                    <option value="14:30">14:30</option>
+                    <option value="15:00">15:00</option>
+                    <option value="15:30">15:30</option>
+                    <option value="16:00">16:00</option>
+                    <option value="16:30">16:30</option>
+                    <option value="17:00">17:00</option>
+                  </select>
+                  <span class="time-sep">〜</span>
+                  <select id="timeTo">
+                    <option value="8:30">8:30</option>
+                    <option value="9:00">9:00</option>
+                    <option value="9:30">9:30</option>
+                    <option value="10:00">10:00</option>
+                    <option value="10:30">10:30</option>
+                    <option value="11:00">11:00</option>
+                    <option value="11:30">11:30</option>
+                    <option value="12:00">12:00</option>
+                    <option value="12:30">12:30</option>
+                    <option value="13:00">13:00</option>
+                    <option value="13:30">13:30</option>
+                    <option value="14:00">14:00</option>
+                    <option value="14:30">14:30</option>
+                    <option value="15:00">15:00</option>
+                    <option value="15:30">15:30</option>
+                    <option value="16:00">16:00</option>
+                    <option value="16:30">16:30</option>
+                    <option value="17:00">17:00</option>
+                    <option value="17:30">17:30</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -200,8 +234,8 @@
 
     function renderCarousel() {
       const track = document.getElementById('carouselTrack');
-      const dots = document.getElementById('carouselDots');
-      const wrap = document.getElementById('carouselWrap');
+      const dots  = document.getElementById('carouselDots');
+      const wrap  = document.getElementById('carouselWrap');
       if (images.length === 0) { wrap.style.display = 'none'; return; }
       wrap.style.display = 'block';
       const badges = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
@@ -250,7 +284,8 @@
 
     function toggleDeliveryTimeInput() {
       const val = document.getElementById('deliveryTimeSelect').value;
-      document.getElementById('deliveryTimeInput').style.display = val === '希望の時間帯がある方' ? 'block' : 'none';
+      document.getElementById('deliveryTimeInput').style.display =
+        val === '時間帯を指定する' ? 'block' : 'none';
     }
 
     function toggleRequestArea() {
@@ -260,7 +295,7 @@
 
     function addResidualItem() {
       const list = document.getElementById('residualList');
-      const div = document.createElement('div');
+      const div  = document.createElement('div');
       div.className = 'residual-item';
       div.innerHTML = `<input type="text" name="medName" class="input-text" placeholder="薬名 / Rp番号">
         <input type="text" name="medCount" class="input-text" placeholder="数量">
@@ -280,29 +315,34 @@
 
       const residualItems = Array.from(document.querySelectorAll('.residual-item')).map(function(item) {
         return {
-          name: item.querySelector('[name="medName"]').value,
+          name:  item.querySelector('[name="medName"]').value,
           count: item.querySelector('[name="medCount"]').value
         };
       });
 
       const deliveryTimeVal = document.getElementById('deliveryTimeSelect').value;
+      const deliveryTime = deliveryTimeVal === '時間帯を指定する'
+        ? document.getElementById('timeFrom').value + '〜' + document.getElementById('timeTo').value
+        : deliveryTimeVal;
+
       const surveyData = {
-        userId: userId,
-        residual: document.getElementById('residual').value,
+        userId:       userId,
+        residual:     document.getElementById('residual').value,
         residualItems: residualItems,
-        delivery: document.getElementById('delivery').value,
+        delivery:     document.getElementById('delivery').value,
         deliveryDate: document.getElementById('deliveryDate').value || '',
-        deliveryTime: deliveryTimeVal === '希望の時間帯がある方'
-          ? document.getElementById('deliveryTimeInput').value
-          : deliveryTimeVal,
-        requestType: document.getElementById('requestType').value,
-        requestText: document.getElementById('requestText').value
+        deliveryTime: deliveryTime,
+        requestType:  document.getElementById('requestType').value,
+        requestText:  document.getElementById('requestText').value
       };
 
       try {
         const res = await fetch(GAS_URL, {
           method: "POST",
-          body: JSON.stringify({ base64DataList: images.map(function(img) { return img.base64; }), survey: surveyData })
+          body: JSON.stringify({
+            base64DataList: images.map(function(img) { return img.base64; }),
+            survey: surveyData
+          })
         });
         const result = await res.json();
         if (result.result === "success") {
