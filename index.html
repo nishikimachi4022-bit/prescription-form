@@ -103,6 +103,11 @@
               <option value="自宅へ配達希望（翌日以降）">自宅へ配達希望（翌日以降）</option>
             </select>
             <div id="deliveryDetailArea" class="detail-area">
+
+              <!-- ★追加：配達先住所 -->
+              <label class="survey-label" style="font-size:11px;">配達先住所<br>(初めてのご利用、配達先が変更になった際にご入力ください。)</label>
+              <input type="text" id="deliveryAddress" placeholder="例：小樽市〇〇町1-2-3" style="margin-bottom:10px;">
+
               <div id="nextDayArea" style="display:none; margin-bottom:10px;">
                 <div class="caution-text">※日曜・祝日の配達は対応できません</div>
                 <label class="survey-label" style="font-size:11px;">希望日</label>
@@ -326,14 +331,15 @@
         : deliveryTimeVal;
 
       const surveyData = {
-        userId:       userId,
-        residual:     document.getElementById('residual').value,
-        residualItems: residualItems,
-        delivery:     document.getElementById('delivery').value,
-        deliveryDate: document.getElementById('deliveryDate').value || '',
-        deliveryTime: deliveryTime,
-        requestType:  document.getElementById('requestType').value,
-        requestText:  document.getElementById('requestText').value
+        userId:          userId,
+        residual:        document.getElementById('residual').value,
+        residualItems:   residualItems,
+        delivery:        document.getElementById('delivery').value,
+        deliveryAddress: document.getElementById('deliveryAddress').value, // ★追加
+        deliveryDate:    document.getElementById('deliveryDate').value || '',
+        deliveryTime:    deliveryTime,
+        requestType:     document.getElementById('requestType').value,
+        requestText:     document.getElementById('requestText').value
       };
 
       try {
