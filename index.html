@@ -332,16 +332,19 @@
         : deliveryTimeVal;
 
       const surveyData = {
-        userId:          userId,
-        residual:        document.getElementById('residual').value,
-        residualItems:   residualItems,
-        delivery:        document.getElementById('delivery').value,
-        deliveryAddress: document.getElementById('deliveryAddress').value, // ★追加
-        deliveryDate:    document.getElementById('deliveryDate').value || '',
-        deliveryTime:    deliveryTime,
-        requestType:     document.getElementById('requestType').value,
-        requestText:     document.getElementById('requestText').value
-      };
+  userId:             userId,
+  residual:           document.getElementById('residual').value,
+  residualItems:      residualItems,
+  delivery:           document.getElementById('delivery').value,
+  deliveryAddress:    document.getElementById('deliveryAddress').value,
+  deliveryDate:       document.getElementById('deliveryDate').value || '',
+  deliveryTime:       deliveryTime,
+  requestType:        document.getElementById('requestType').value,
+  requestText:        document.getElementById('requestText').value,
+  consentTimestamp:   localStorage.getItem('consent_' + userId + '_' + POLICY_VER) || '', // ★追加
+  consentVersion:     POLICY_VER  // ★追加
+};
+
 
       try {
         const res = await fetch(GAS_URL, {
