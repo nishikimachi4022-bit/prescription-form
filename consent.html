@@ -329,9 +329,9 @@
         // ★no-corsでCORSエラーを回避して送信
         await fetch(GAS_URL, {
   method: "POST",
-  mode: "no-cors",
+  // mode: "no-cors" を削除
   headers: {
-    "Content-Type": "text/plain"  // ← これを追加
+    "Content-Type": "text/plain"
   },
   body: JSON.stringify({
     type: "consent",
