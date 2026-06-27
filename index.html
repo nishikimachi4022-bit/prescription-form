@@ -354,10 +354,10 @@
           document.getElementById('mainForm').style.display = 'none';
           document.getElementById('successMessage').style.display = 'block';
         } else {
-          alert("送信エラー: " + result.message);
-          document.getElementById('submitBtn').disabled = false;
-          document.getElementById('loading').style.display = 'none';
-        }
+  alert("送信エラー: " + JSON.stringify(result));  // ← undefinedではなく中身を表示
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('loading').style.display = 'none';
+}
       } catch (err) {
         alert("通信エラー: " + err);
         document.getElementById('submitBtn').disabled = false;
