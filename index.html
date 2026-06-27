@@ -341,28 +341,30 @@
   // consentTimestamp と consentVersion を一時削除
 };
 
-      try {
-        const res = await fetch(GAS_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            base64DataList: images.map(function(img) { return img.base64; }),
-            survey: surveyData
-          })
-        });
-        const result = await res.json();
-        if (result.result === "success") {
-          document.getElementById('mainForm').style.display = 'none';
-          document.getElementById('successMessage').style.display = 'block';
-        } else {
-  alert("送信エラー: " + JSON.stringify(result));  // ← undefinedではなく中身を表示
+try {
+  const res = await fetch(GAS_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      base64DataList: images.map(function(img) { return img.base64; }),
+      survey: surveyData
+    })
+  });
+  const text = await res.text(); // ★ まずテキストで受け取る
+  alert("レスポンス: " + text.substring(0, 200)); // ★ 最初の200文字を表示
+  const result = JSON.parse(text);
+  if (result.result === "success") {
+    document.getElementById('mainForm').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'block';
+  } else {
+    alert("送信エラー: " + JSON.stringify(result));
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('loading').style.display = 'none';
+  }
+} catch (err) {
+  alert("通信エラー: " + err);
   document.getElementById('submitBtn').disabled = false;
   document.getElementById('loading').style.display = 'none';
 }
-      } catch (err) {
-        alert("通信エラー: " + err);
-        document.getElementById('submitBtn').disabled = false;
-        document.getElementById('loading').style.display = 'none';
-      }
     }
 
     loadLiffSdk();
