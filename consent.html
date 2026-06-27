@@ -257,101 +257,65 @@
   </div>
 
   <script>
-    const MY_LIFF_ID  = "2008268085-RVzk6eNO";
-    const GAS_URL     = "https://script.google.com/macros/s/AKfycbwX7APw9dkY_wpkf-6_J48Bm6PilzT1z9IyaEr1WwaA0_hIo8HkYGLIyW1KAqI4G7-R/exec";
-    const POLICY_VER  = "2025-05";
-    const FORM_URL    = "./index.html";
+  const MY_LIFF_ID  = "2008268085-RVzk6eNO";
+  const GAS_URL     = "https://script.google.com/macros/s/AKfycbz6NzcT8L5vxV64v4tQy7PpEJPaL3jzixRz2l23JMe_3gPinR3XZZV7244nTMhuLEak/exec";
+  const POLICY_VER  = "2025-05";
+  const FORM_URL    = "./index.html";
 
-    let userId = "";
+  let userId = "";
 
-    // ======================================================
-    // LIFF初期化
-    // ======================================================
-    function loadLiffSdk() {
-      const s = document.createElement('script');
-      s.src = "https://static.line-scdn.net/liff/edge/2/sdk.js";
-      s.onload = initLiff;
-      s.onerror = function() { console.error("SDK読み込み失敗"); };
-      document.body.appendChild(s);
-    }
+  function loadLiffSdk() {
+    const s = document.createElement('script');
+    s.src = "https://static.line-scdn.net/liff/edge/2/sdk.js";
+    s.onload = initLiff;
+    s.onerror = function() { console.error("SDK読み込み失敗"); };
+    document.body.appendChild(s);
+  }
 
-    function initLiff() {
-      liff.init({ liffId: MY_LIFF_ID }).then(function() {
-        if (!liff.isLoggedIn()) {
-          liff.login();
-        } else {
-          liff.getProfile().then(function(profile) {
-            userId = profile.userId;
-            checkAlreadyConsented(userId);
-          });
-        }
-      }).catch(function(err) {
-        console.error("LIFF初期化失敗:", err);
-      });
-    }
-
-    // ======================================================
-    // 同意済みチェック（no-corsで通信）
-    // ======================================================
-    function checkAlreadyConsented(uid) {
-      fetch(GAS_URL + "?action=checkConsent&userId=" + encodeURIComponent(uid) + "&version=" + POLICY_VER)
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data.consented) {
-            location.href = FORM_URL;
-          }
-        })
-        .catch(function() {
-          // チェック失敗時はこの画面を表示したまま継続
+  function initLiff() {
+    liff.init({ liffId: MY_LIFF_ID }).then(function() {
+      if (!liff.isLoggedIn()) {
+        liff.login();
+      } else {
+        liff.getProfile().then(function(profile) {
+          userId = profile.userId;
+          checkAlreadyConsented(userId);
         });
-    }
-
-    // ======================================================
-    // チェックボックス：□部分のみ有効
-    // ======================================================
-    function onCheckChange() {
-      const cb = document.getElementById('agreeCheck');
-      document.getElementById('agreeBtn').disabled = !cb.checked;
-    }
-
-    // ======================================================
-    // 同意送信（no-corsでCORSエラー回避）
-    // ======================================================
-    async function submitConsent() {
-      if (!userId) {
-        alert("ユーザー情報の取得中です。少しお待ちください。");
-        return;
       }
-      document.getElementById('agreeBtn').disabled = true;
-      document.getElementById('loading').style.display = 'block';
+    }).catch(function(err) {
+      console.error("LIFF初期化失敗:", err);
+    });
+  }
 
-      try {
-        // ★no-corsでCORSエラーを回避して送信
-        await fetch(GAS_URL, {
-  method: "POST",
-  // mode: "no-cors" を削除
-  headers: {
-    "Content-Type": "text/plain"
-  },
-  body: JSON.stringify({
-    type: "consent",
-    userId: userId,
-    version: POLICY_VER,
-    timestamp: new Date().toISOString()
-  })
-});
-
-        // ★送信完了後に直接遷移
-        location.href = FORM_URL;
-
-      } catch (err) {
-        alert("エラーが発生しました。再度お試しください。\n" + err);
-        document.getElementById('agreeBtn').disabled = false;
-        document.getElementById('loading').style.display = 'none';
-      }
+  // ローカルストレージで同意済みチェック
+  function checkAlreadyConsented(uid) {
+    const key = 'consent_' + uid + '_' + POLICY_VER;
+    if (localStorage.getItem(key)) {
+      location.href = FORM_URL;
     }
+  }
 
-    loadLiffSdk();
-  </script>
+  function onCheckChange() {
+    const cb = document.getElementById('agreeCheck');
+    document.getElementById('agreeBtn').disabled = !cb.checked;
+  }
+
+  // ローカルストレージに保存して遷移
+  function submitConsent() {
+    if (!userId) {
+      alert("ユーザー情報の取得中です。少しお待ちください。");
+      return;
+    }
+    document.getElementById('agreeBtn').disabled = true;
+    document.getElementById('loading').style.display = 'block';
+
+    const key = 'consent_' + userId + '_' + POLICY_VER;
+    localStorage.setItem(key, new Date().toISOString());
+
+    location.href = FORM_URL;
+  }
+
+  loadLiffSdk();
+</script>
 </body>
 </html>
