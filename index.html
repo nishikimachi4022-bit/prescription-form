@@ -103,11 +103,8 @@
               <option value="自宅へ配達希望（翌日以降）">自宅へ配達希望（翌日以降）</option>
             </select>
             <div id="deliveryDetailArea" class="detail-area">
-
-              <!-- ★追加：配達先住所 -->
               <label class="survey-label" style="font-size:11px;">配達先住所</label>
               <input type="text" id="deliveryAddress" placeholder="初めてのご利用や配達先の変更の際にご入力ください。" style="margin-bottom:10px;">
-
               <div id="nextDayArea" style="display:none; margin-bottom:10px;">
                 <div class="caution-text">※日曜・祝日の配達は対応できません</div>
                 <label class="survey-label" style="font-size:11px;">希望日</label>
@@ -341,8 +338,8 @@
         deliveryTime:     deliveryTime,
         requestType:      document.getElementById('requestType').value,
         requestText:      document.getElementById('requestText').value,
-        consentTimestamp: localStorage.getItem('consent_' + userId + '_' + POLICY_VER) || '',  // ★追加
-        consentVersion:   POLICY_VER  // ★追加
+        consentTimestamp: localStorage.getItem('consent_' + userId + '_' + POLICY_VER) || '',
+        consentVersion:   POLICY_VER
       };
 
       try {
