@@ -329,18 +329,17 @@
         : deliveryTimeVal;
 
       const surveyData = {
-        userId:           userId,
-        residual:         document.getElementById('residual').value,
-        residualItems:    residualItems,
-        delivery:         document.getElementById('delivery').value,
-        deliveryAddress:  document.getElementById('deliveryAddress').value,
-        deliveryDate:     document.getElementById('deliveryDate').value || '',
-        deliveryTime:     deliveryTime,
-        requestType:      document.getElementById('requestType').value,
-        requestText:      document.getElementById('requestText').value,
-        consentTimestamp: localStorage.getItem('consent_' + userId + '_' + POLICY_VER) || '',
-        consentVersion:   POLICY_VER
-      };
+  userId:          userId,
+  residual:        document.getElementById('residual').value,
+  residualItems:   residualItems,
+  delivery:        document.getElementById('delivery').value,
+  deliveryAddress: document.getElementById('deliveryAddress').value,
+  deliveryDate:    document.getElementById('deliveryDate').value || '',
+  deliveryTime:    deliveryTime,
+  requestType:     document.getElementById('requestType').value,
+  requestText:     document.getElementById('requestText').value
+  // consentTimestamp と consentVersion を一時削除
+};
 
       try {
         const res = await fetch(GAS_URL, {
