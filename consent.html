@@ -23,7 +23,6 @@
       overflow: hidden;
     }
 
-    /* 黄緑→青緑グラデーション */
     .header {
       background: linear-gradient(135deg, #8bc34a, #00acc1);
       padding: 20px;
@@ -103,7 +102,6 @@
       word-break: break-all;
     }
 
-    /* チェックボックス：□部分のみクリック有効 */
     .check-wrap {
       display: flex;
       align-items: flex-start;
@@ -130,7 +128,6 @@
       user-select: none;
     }
 
-    /* 黄緑→青緑グラデーション */
     .btn-agree {
       background: linear-gradient(135deg, #8bc34a, #00acc1);
       color: white;
@@ -170,7 +167,7 @@
     .external-note a { color: #00897b; }
   </style>
 </head>
-<body>
+<body style="display:none">
   <div class="container">
     <div class="header">
       <h2>個人情報の取扱いについて</h2>
@@ -183,7 +180,6 @@
 
       <span class="sensitive-badge">個人情報の取り扱いについて</span>
 
-      <!-- ポリシー本文 -->
       <div class="policy-box" id="policyBox">
 
         <h3>取得する情報</h3>
@@ -236,7 +232,6 @@
 
       </div>
 
-      <!-- チェックボックス（□部分のみクリック有効・スクロール不要） -->
       <div class="check-wrap">
         <input type="checkbox" id="agreeCheck" onchange="onCheckChange()">
         <label for="">
@@ -244,7 +239,6 @@
         </label>
       </div>
 
-      <!-- 同意ボタン -->
       <button class="btn-agree" id="agreeBtn" onclick="submitConsent()" disabled>
         同意して処方箋を送信する
       </button>
@@ -257,65 +251,67 @@
   </div>
 
   <script>
-  const MY_LIFF_ID  = "2008268085-RVzk6eNO";
-  const GAS_URL     = "https://script.google.com/macros/s/AKfycbwX7APw9dkY_wpkf-6_J48Bm6PilzT1z9IyaEr1WwaA0_hIo8HkYGLIyW1KAqI4G7-R/exec";
-  const POLICY_VER  = "2025-05";
-  const FORM_URL    = "./index.html";
+    const MY_LIFF_ID = "2008268085-RVzk6eNO";
+    const GAS_URL    = "https://script.google.com/macros/s/AKfycbwX7APw9dkY_wpkf-6_J48Bm6PilzT1z9IyaEr1WwaA0_hIo8HkYGLIyW1KAqI4G7-R/exec";
+    const POLICY_VER = "2025-06";
+    const FORM_URL   = "./index.html";
 
-  let userId = "";
+    let userId = "";
 
-  function loadLiffSdk() {
-    const s = document.createElement('script');
-    s.src = "https://static.line-scdn.net/liff/edge/2/sdk.js";
-    s.onload = initLiff;
-    s.onerror = function() { console.error("SDK読み込み失敗"); };
-    document.body.appendChild(s);
-  }
+    function loadLiffSdk() {
+      const s = document.createElement('script');
+      s.src = "https://static.line-scdn.net/liff/edge/2/sdk.js";
+      s.onload = initLiff;
+      s.onerror = function() { console.error("SDK読み込み失敗"); };
+      document.body.appendChild(s);
+    }
 
-  function initLiff() {
-    liff.init({ liffId: MY_LIFF_ID }).then(function() {
-      if (!liff.isLoggedIn()) {
-        liff.login();
+    function initLiff() {
+      liff.init({ liffId: MY_LIFF_ID }).then(function() {
+        if (!liff.isLoggedIn()) {
+          liff.login();
+        } else {
+          liff.getProfile().then(function(profile) {
+            userId = profile.userId;
+            checkAlreadyConsented(userId);
+          });
+        }
+      }).catch(function(err) {
+        console.error("LIFF初期化失敗:", err);
+        document.body.style.display = 'block';
+      });
+    }
+
+    // 同意済みなら非表示のまま遷移、未同意なら画面を表示
+    function checkAlreadyConsented(uid) {
+      const key = 'consent_' + uid + '_' + POLICY_VER;
+      if (localStorage.getItem(key)) {
+        location.href = FORM_URL;
       } else {
-        liff.getProfile().then(function(profile) {
-          userId = profile.userId;
-          checkAlreadyConsented(userId);
-        });
+        document.body.style.display = 'block';
       }
-    }).catch(function(err) {
-      console.error("LIFF初期化失敗:", err);
-    });
-  }
+    }
 
-  // ローカルストレージで同意済みチェック
-  function checkAlreadyConsented(uid) {
-    const key = 'consent_' + uid + '_' + POLICY_VER;
-    if (localStorage.getItem(key)) {
+    function onCheckChange() {
+      const cb = document.getElementById('agreeCheck');
+      document.getElementById('agreeBtn').disabled = !cb.checked;
+    }
+
+    function submitConsent() {
+      if (!userId) {
+        alert("ユーザー情報の取得中です。少しお待ちください。");
+        return;
+      }
+      document.getElementById('agreeBtn').disabled = true;
+      document.getElementById('loading').style.display = 'block';
+
+      const key = 'consent_' + userId + '_' + POLICY_VER;
+      localStorage.setItem(key, new Date().toISOString());
+
       location.href = FORM_URL;
     }
-  }
 
-  function onCheckChange() {
-    const cb = document.getElementById('agreeCheck');
-    document.getElementById('agreeBtn').disabled = !cb.checked;
-  }
-
-  // ローカルストレージに保存して遷移
-  function submitConsent() {
-    if (!userId) {
-      alert("ユーザー情報の取得中です。少しお待ちください。");
-      return;
-    }
-    document.getElementById('agreeBtn').disabled = true;
-    document.getElementById('loading').style.display = 'block';
-
-    const key = 'consent_' + userId + '_' + POLICY_VER;
-    localStorage.setItem(key, new Date().toISOString());
-
-    location.href = FORM_URL;
-  }
-
-  loadLiffSdk();
-</script>
+    loadLiffSdk();
+  </script>
 </body>
 </html>
