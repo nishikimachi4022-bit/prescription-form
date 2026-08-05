@@ -9,11 +9,18 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif; background: #f0f4f8; min-height: 100vh; padding: 16px; }
     .container { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 420px; margin: 0 auto; overflow: hidden; }
-    .header { background: linear-gradient(135deg, #8bc34a, #00acc1); padding: 20px; text-align: center; }
+    .header { background: linear-gradient(135deg, #8bc34a, #00acc1); padding: 20px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header .header-icon { width: 24px; height: 24px; flex-shrink: 0; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15)); }
+    .header .header-icon svg { width: 100%; height: 100%; display: block; }
     .header h2 { color: white; font-size: 1.1em; font-weight: bold; letter-spacing: 0.05em; text-shadow: 0 1px 3px rgba(0,0,0,0.15); }
     .body { padding: 20px; }
-    .btn-camera { display: flex; align-items: center; justify-content: center; gap: 8px; background: #007bff; color: white; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 16px; }
+    .capture-btn-row { display: flex; gap: 10px; margin-bottom: 16px; }
+    .btn-camera { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: #007bff; color: white; padding: 20px 10px; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; flex: 1; line-height: 1.3; box-shadow: 0 3px 8px rgba(0,123,255,0.25); }
+    .btn-camera .icon { width: 30px; height: 30px; }
+    .btn-camera .icon svg { width: 100%; height: 100%; display: block; }
     .btn-camera:active { background: #0056b3; }
+    .btn-library { background: #00acc1; box-shadow: 0 3px 8px rgba(0,172,193,0.25); }
+    .btn-library:active { background: #00838f; }
     .carousel-wrap { position: relative; margin-bottom: 16px; display: none; }
     .carousel-viewport { overflow: hidden; border-radius: 10px; background: #000; position: relative; height: 200px; }
     .carousel-track { display: flex; transition: transform 0.3s ease; height: 100%; }
@@ -49,21 +56,57 @@
     .btn-submit:disabled { background: #adb5bd; box-shadow: none; cursor: not-allowed; }
     #loading { display: none; text-align: center; color: #00acc1; font-weight: bold; margin-top: 12px; font-size: 14px; }
     #successMessage { display: none; text-align: center; padding: 40px 20px; }
-    #successMessage h2 { color: #00897b; font-size: 1.3em; margin-bottom: 12px; }
+    #successMessage h2 { color: #00897b; font-size: 1.3em; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    #successMessage .success-icon { width: 26px; height: 26px; flex-shrink: 0; }
+    #successMessage .success-icon svg { width: 100%; height: 100%; display: block; }
     #successMessage p { color: #555; font-size: 14px; line-height: 1.7; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h2>📋 処方箋送信フォーム</h2>
+      <span class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 5.5C7 4.67157 7.67157 4 8.5 4H9.17C9.58 3.4 10.24 3 11 3H13C13.76 3 14.42 3.4 14.83 4H15.5C16.3284 4 17 4.67157 17 5.5V6H7V5.5Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+          <rect x="5" y="5.5" width="14" height="16" rx="2" stroke="white" stroke-width="1.5"/>
+          <path d="M8.5 12H15.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8.5 15.5H15.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8.5 19H12.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <h2>処方箋送信フォーム</h2>
     </div>
 
     <div class="body">
       <div id="mainForm">
 
-        <input type="file" id="fileInput" accept="image/*" capture="environment" multiple style="display:none">
-        <button class="btn-camera" onclick="document.getElementById('fileInput').click()">📸 処方箋を撮影・追加する</button>
+        <!-- カメラ撮影用（capture属性つき：カメラが直接起動） -->
+        <input type="file" id="fileInputCamera" accept="image/*" capture="environment" multiple style="display:none">
+        <!-- ライブラリ選択用（capture属性なし：写真ライブラリ/ファイルから選択できる） -->
+        <input type="file" id="fileInputLibrary" accept="image/*" multiple style="display:none">
+
+        <div class="capture-btn-row">
+          <button class="btn-camera" onclick="document.getElementById('fileInputCamera').click()">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 8.5C4 7.39543 4.89543 6.5 6 6.5H8L9.2 4.7C9.4 4.4 9.73 4.2 10.1 4.2H13.9C14.27 4.2 14.6 4.4 14.8 4.7L16 6.5H18C19.1046 6.5 20 7.39543 20 8.5V17.5C20 18.6046 19.1046 19.5 18 19.5H6C4.89543 19.5 4 18.6046 4 17.5V8.5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/>
+                <circle cx="12" cy="13" r="3.4" stroke="white" stroke-width="1.6"/>
+              </svg>
+            </span>
+            <span>撮影する</span>
+          </button>
+          <button class="btn-camera btn-library" onclick="document.getElementById('fileInputLibrary').click()">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="5" width="14" height="14" rx="2" stroke="white" stroke-width="1.6"/>
+                <circle cx="9" cy="10" r="1.6" stroke="white" stroke-width="1.5"/>
+                <path d="M5 16.5L9.5 12.5C10 12 10.7 12 11.2 12.4L14 14.8" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12.5 16.5L15.7 13.6C16.2 13.15 16.95 13.15 17.4 13.6L19 15.2" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span>写真を選ぶ</span>
+          </button>
+        </div>
 
         <div class="carousel-wrap" id="carouselWrap">
           <div class="carousel-viewport">
@@ -185,7 +228,15 @@
       </div>
 
       <div id="successMessage">
-        <h2>✅ 送信完了</h2>
+        <h2>
+          <span class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="9.5" stroke="#00897b" stroke-width="1.6"/>
+              <path d="M8 12.3L10.6 15L16 9.5" stroke="#00897b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span>送信完了</span>
+        </h2>
         <p>処方箋を受け付けました。<br>準備ができましたらご連絡いたします。<br>この画面を閉じてお待ちください。</p>
       </div>
     </div>
@@ -222,7 +273,7 @@
         .catch(function(err) { console.error("LIFF初期化失敗:", err); });
     }
 
-    document.getElementById('fileInput').onchange = function(e) {
+    function handleFileSelect(e) {
       const files = Array.from(e.target.files);
       files.forEach(function(file) {
         const reader = new FileReader();
@@ -233,7 +284,10 @@
         reader.readAsDataURL(file);
       });
       e.target.value = "";
-    };
+    }
+
+    document.getElementById('fileInputCamera').onchange = handleFileSelect;
+    document.getElementById('fileInputLibrary').onchange = handleFileSelect;
 
     function renderCarousel() {
       const track = document.getElementById('carouselTrack');
