@@ -5,83 +5,266 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>処方箋送信フォーム</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #FBF3E7;
+      --paper: #FFFDF9;
+      --card: #FFFFFF;
+      --sage: #7EB693;
+      --sage-dark: #5C9873;
+      --sage-tint: #E7F3EA;
+      --teal: #5FB8C4;
+      --teal-dark: #3E96A2;
+      --teal-tint: #E5F5F6;
+      --peach: #F4A261;
+      --peach-dark: #E8874A;
+      --peach-tint: #FDEEE0;
+      --ink: #4A4238;
+      --ink-soft: #8A8177;
+      --line: #ECE0CC;
+      --danger: #E0665C;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif; background: #f0f4f8; min-height: 100vh; padding: 16px; }
-    .container { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 420px; margin: 0 auto; overflow: hidden; }
-    .header { background: linear-gradient(135deg, #8bc34a, #00acc1); padding: 20px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .header .header-icon { width: 24px; height: 24px; flex-shrink: 0; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15)); }
-    .header .header-icon svg { width: 100%; height: 100%; display: block; }
-    .header h2 { color: white; font-size: 1.1em; font-weight: bold; letter-spacing: 0.05em; text-shadow: 0 1px 3px rgba(0,0,0,0.15); }
-    .body { padding: 20px; }
-    .capture-btn-row { display: flex; gap: 10px; margin-bottom: 16px; }
-    .btn-camera { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: #007bff; color: white; padding: 20px 10px; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; flex: 1; line-height: 1.3; box-shadow: 0 3px 8px rgba(0,123,255,0.25); }
-    .btn-camera .icon { width: 30px; height: 30px; }
+
+    body {
+      font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 8% 8%, rgba(126,182,147,0.16) 0, transparent 40%),
+        radial-gradient(circle at 92% 18%, rgba(95,184,196,0.16) 0, transparent 38%),
+        radial-gradient(circle at 15% 92%, rgba(244,162,97,0.14) 0, transparent 42%);
+      min-height: 100vh;
+      padding: 20px 14px;
+      color: var(--ink);
+    }
+
+    .container {
+      background: var(--paper);
+      border-radius: 28px;
+      box-shadow: 0 12px 32px rgba(90, 70, 40, 0.10), 0 2px 6px rgba(90,70,40,0.06);
+      max-width: 420px;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      position: relative;
+      background: linear-gradient(160deg, var(--sage) 0%, var(--teal) 100%);
+      padding: 30px 20px 26px;
+      text-align: center;
+      overflow: hidden;
+    }
+    .header::before, .header::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.14);
+    }
+    .header::before { width: 120px; height: 120px; top: -60px; left: -30px; }
+    .header::after { width: 90px; height: 90px; bottom: -50px; right: -20px; background: rgba(255,255,255,0.10); }
+    .header-icon-chip {
+      position: relative; z-index: 1;
+      width: 52px; height: 52px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transform: rotate(-4deg);
+    }
+    .header-icon-chip svg { width: 28px; height: 28px; }
+    .header h2 {
+      position: relative; z-index: 1;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      color: white;
+      font-size: 1.2em;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .header p.header-sub {
+      position: relative; z-index: 1;
+      color: rgba(255,255,255,0.9);
+      font-size: 11.5px;
+      margin-top: 4px;
+      letter-spacing: 0.03em;
+    }
+
+    .body { padding: 22px 18px 20px; }
+
+    /* ===== CAPTURE BUTTONS ===== */
+    .capture-btn-row { display: flex; gap: 10px; margin-bottom: 18px; }
+    .btn-camera {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      background: var(--sage); color: white;
+      padding: 18px 10px; border: none; border-radius: 20px;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: 13.5px; font-weight: 700; cursor: pointer; flex: 1; line-height: 1.3;
+      box-shadow: 0 5px 0 var(--sage-dark);
+      transition: transform 0.08s ease;
+    }
+    .btn-camera .icon { width: 28px; height: 28px; }
     .btn-camera .icon svg { width: 100%; height: 100%; display: block; }
-    .btn-camera:active { background: #0056b3; }
-    .btn-library { background: #00acc1; box-shadow: 0 3px 8px rgba(0,172,193,0.25); }
-    .btn-library:active { background: #00838f; }
-    .carousel-wrap { position: relative; margin-bottom: 16px; display: none; }
-    .carousel-viewport { overflow: hidden; border-radius: 10px; background: #000; position: relative; height: 200px; }
+    .btn-camera:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--sage-dark); }
+    .btn-library { background: var(--teal); box-shadow: 0 5px 0 var(--teal-dark); }
+    .btn-library:active { box-shadow: 0 2px 0 var(--teal-dark); }
+
+    /* ===== CAROUSEL (washi-tape pinned photo) ===== */
+    .carousel-wrap { position: relative; margin: 6px 4px 22px; display: none; }
+    .tape { position: absolute; width: 54px; height: 20px; background: rgba(244,162,97,0.55); border: 1px solid rgba(232,135,74,0.35); z-index: 4; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .tape-left { top: -10px; left: 8px; transform: rotate(-8deg); }
+    .tape-right { top: -10px; right: 8px; transform: rotate(7deg); background: rgba(95,184,196,0.5); border-color: rgba(62,150,162,0.35); }
+    .carousel-viewport {
+      overflow: hidden; border-radius: 14px; background: #2c2620; position: relative; height: 210px;
+      border: 5px solid var(--card); box-shadow: 0 6px 16px rgba(90,70,40,0.16);
+    }
     .carousel-track { display: flex; transition: transform 0.3s ease; height: 100%; }
     .carousel-slide { min-width: 100%; height: 100%; position: relative; flex-shrink: 0; }
     .carousel-slide img { width: 100%; height: 100%; object-fit: contain; }
-    .slide-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.65); color: white; font-size: 13px; font-weight: bold; border-radius: 20px; padding: 2px 10px; z-index: 2; }
-    .btn-delete { position: absolute; bottom: 8px; right: 8px; background: rgba(220,53,69,0.85); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 16px; cursor: pointer; z-index: 2; display: flex; align-items: center; justify-content: center; }
-    .carousel-prev, .carousel-next { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.45); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; z-index: 3; display: flex; align-items: center; justify-content: center; }
-    .carousel-prev { left: 6px; }
-    .carousel-next { right: 6px; }
-    .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; cursor: pointer; transition: background 0.2s; }
-    .dot.active { background: #00acc1; }
-    .survey-group { margin-bottom: 16px; }
-    .survey-label { font-weight: bold; font-size: 13px; color: #333; display: block; margin-bottom: 6px; }
-    select, input[type="text"], input[type="date"], textarea {
-      width: 100%; padding: 10px 12px; border: 1.5px solid #dee2e6; border-radius: 8px;
-      font-size: 13px; color: #333; background: #fafafa; appearance: none; -webkit-appearance: none;
+    .slide-badge {
+      position: absolute; top: 8px; left: 8px; background: rgba(74,66,56,0.72); color: white;
+      font-size: 12px; font-weight: bold; border-radius: 20px; padding: 2px 10px; z-index: 2;
+      font-family: 'Zen Maru Gothic', sans-serif;
     }
-    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
-    textarea { height: 70px; resize: vertical; }
-    .detail-area { display: none; margin-top: 10px; background: #f8f9fa; border-radius: 8px; padding: 12px; border-left: 3px solid #00acc1; }
-    .detail-area.open { display: block; }
+    .btn-delete {
+      position: absolute; bottom: 8px; right: 8px; background: var(--danger); color: white; border: none;
+      border-radius: 50%; width: 30px; height: 30px; font-size: 16px; cursor: pointer; z-index: 2;
+      display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .carousel-prev, .carousel-next {
+      position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.85); color: var(--ink);
+      border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 16px; cursor: pointer; z-index: 3;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .carousel-prev { left: 8px; }
+    .carousel-next { right: 8px; }
+    .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line); cursor: pointer; transition: background 0.2s, transform 0.2s; }
+    .dot.active { background: var(--teal-dark); transform: scale(1.3); }
+
+    /* ===== SURVEY SECTIONS ===== */
+    .survey-group {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      margin-bottom: 14px;
+    }
+    .section-head { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+    .section-icon {
+      width: 30px; height: 30px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .section-icon svg { width: 17px; height: 17px; }
+    .section-icon.sage { background: var(--sage-tint); }
+    .section-icon.teal { background: var(--teal-tint); }
+    .section-icon.peach { background: var(--peach-tint); }
+    .survey-label {
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-weight: 700; font-size: 13.5px; color: var(--ink);
+    }
+    .sub-label {
+      font-weight: 500; font-size: 11px; color: var(--ink-soft); display: block; margin-bottom: 6px;
+    }
+
+    select, input[type="text"], input[type="date"], textarea {
+      width: 100%; padding: 11px 12px; border: 1.5px solid var(--line); border-radius: 12px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 13px; color: var(--ink); background: var(--bg); appearance: none; -webkit-appearance: none;
+    }
+    select:focus, input:focus, textarea:focus { outline: none; border-color: var(--teal); background: white; }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238A8177' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; padding-right: 34px;
+    }
+    textarea { height: 72px; resize: vertical; }
+
+    .detail-area {
+      display: none; margin-top: 10px; background: var(--bg); border-radius: 14px; padding: 12px;
+      border: 1.5px dashed var(--line);
+    }
+    .detail-area.open { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
     .residual-item { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
-    .residual-item input { flex: 1; }
-    .btn-remove-item { background: #dc3545; color: white; border: none; border-radius: 6px; width: 26px; height: 26px; font-size: 14px; cursor: pointer; flex-shrink: 0; }
-    .add-btn { background: #e8f5e9; color: #00897b; border: 1.5px dashed #00acc1; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 4px; }
-    .caution-text { font-size: 11px; color: #dc3545; margin-bottom: 8px; background: #fff3f3; padding: 6px 10px; border-radius: 6px; }
+    .residual-item input { flex: 1; background: white; }
+    .btn-remove-item {
+      background: var(--danger); color: white; border: none; border-radius: 9px; width: 30px; height: 30px;
+      font-size: 14px; cursor: pointer; flex-shrink: 0;
+    }
+    .add-btn {
+      background: var(--sage-tint); color: var(--sage-dark); border: 1.5px dashed var(--sage);
+      border-radius: 12px; padding: 9px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 4px;
+      font-family: 'Zen Maru Gothic', sans-serif;
+    }
+
+    .caution-text {
+      font-size: 11px; color: var(--peach-dark); margin-bottom: 8px; background: var(--peach-tint);
+      padding: 7px 10px; border-radius: 10px; display: flex; align-items: center; gap: 5px;
+    }
+
     .time-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-    .time-row select { flex: 1; }
-    .time-sep { font-size: 13px; color: #555; white-space: nowrap; }
-    .btn-submit { background: linear-gradient(135deg, #8bc34a, #00acc1); color: white; padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; box-shadow: 0 3px 10px rgba(0, 172, 193, 0.25); }
-    .btn-submit:disabled { background: #adb5bd; box-shadow: none; cursor: not-allowed; }
-    #loading { display: none; text-align: center; color: #00acc1; font-weight: bold; margin-top: 12px; font-size: 14px; }
-    #successMessage { display: none; text-align: center; padding: 40px 20px; }
-    #successMessage h2 { color: #00897b; font-size: 1.3em; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    #successMessage .success-icon { width: 26px; height: 26px; flex-shrink: 0; }
-    #successMessage .success-icon svg { width: 100%; height: 100%; display: block; }
-    #successMessage p { color: #555; font-size: 14px; line-height: 1.7; }
+    .time-row select { flex: 1; background: white; }
+    .time-sep { font-size: 13px; color: var(--ink-soft); white-space: nowrap; }
+
+    /* ===== SUBMIT ===== */
+    .btn-submit {
+      background: linear-gradient(135deg, var(--sage), var(--teal));
+      color: white; padding: 17px; border: none; border-radius: 20px;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 6px;
+      box-shadow: 0 5px 0 var(--teal-dark);
+      transition: transform 0.08s ease;
+    }
+    .btn-submit:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--teal-dark); }
+    .btn-submit:disabled { background: #D9D2C4; box-shadow: none; cursor: not-allowed; }
+    #loading { display: none; text-align: center; color: var(--teal-dark); font-weight: bold; margin-top: 12px; font-size: 13.5px; font-family: 'Zen Maru Gothic', sans-serif; }
+
+    /* ===== SUCCESS ===== */
+    #successMessage { display: none; text-align: center; padding: 44px 22px; }
+    .success-icon-chip {
+      width: 64px; height: 64px; border-radius: 50%; background: var(--sage-tint);
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+    }
+    .success-icon-chip svg { width: 32px; height: 32px; }
+    #successMessage h2 {
+      font-family: 'Zen Maru Gothic', sans-serif;
+      color: var(--sage-dark); font-size: 1.25em; margin-bottom: 12px; font-weight: 700;
+    }
+    #successMessage p { color: var(--ink-soft); font-size: 13.5px; line-height: 1.8; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .detail-area.open { animation: none; }
+      .btn-camera, .btn-submit { transition: none; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <span class="header-icon">
+      <div class="header-icon-chip">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7 5.5C7 4.67157 7.67157 4 8.5 4H9.17C9.58 3.4 10.24 3 11 3H13C13.76 3 14.42 3.4 14.83 4H15.5C16.3284 4 17 4.67157 17 5.5V6H7V5.5Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
-          <rect x="5" y="5.5" width="14" height="16" rx="2" stroke="white" stroke-width="1.5"/>
-          <path d="M8.5 12H15.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M8.5 15.5H15.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M8.5 19H12.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M7 5.5C7 4.67157 7.67157 4 8.5 4H9.17C9.58 3.4 10.24 3 11 3H13C13.76 3 14.42 3.4 14.83 4H15.5C16.3284 4 17 4.67157 17 5.5V6H7V5.5Z" stroke="#5C9873" stroke-width="1.5" stroke-linejoin="round"/>
+          <rect x="5" y="5.5" width="14" height="16" rx="2" stroke="#5C9873" stroke-width="1.5"/>
+          <path d="M8.5 12H15.5" stroke="#5C9873" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8.5 15.5H15.5" stroke="#5C9873" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8.5 19H12.5" stroke="#5C9873" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-      </span>
+      </div>
       <h2>処方箋送信フォーム</h2>
+      <p class="header-sub">写真を送るだけで、かんたん受付</p>
     </div>
 
     <div class="body">
       <div id="mainForm">
 
-        <!-- カメラ撮影用（capture属性つき：カメラが直接起動） -->
-        <input type="file" id="fileInputCamera" accept="image/*" capture="environment" multiple style="display:none">
+        <!-- カメラ撮影用（capture属性つき・multipleなし：カメラのみが直接起動） -->
+        <input type="file" id="fileInputCamera" accept="image/*" capture="environment" style="display:none">
         <!-- ライブラリ選択用（capture属性なし：写真ライブラリ/ファイルから選択できる） -->
         <input type="file" id="fileInputLibrary" accept="image/*" multiple style="display:none">
 
@@ -109,6 +292,8 @@
         </div>
 
         <div class="carousel-wrap" id="carouselWrap">
+          <div class="tape tape-left"></div>
+          <div class="tape tape-right"></div>
           <div class="carousel-viewport">
             <div class="carousel-track" id="carouselTrack"></div>
             <button class="carousel-prev" onclick="changeSlide(-1)">&#8249;</button>
@@ -120,13 +305,21 @@
         <div id="questionnaire">
 
           <div class="survey-group">
-            <label class="survey-label">残薬の調整</label>
+            <div class="section-head">
+              <span class="section-icon sage">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="6" y="3" width="12" height="18" rx="6" stroke="#5C9873" stroke-width="1.7"/>
+                  <path d="M6 10H18" stroke="#5C9873" stroke-width="1.7"/>
+                </svg>
+              </span>
+              <label class="survey-label">残薬の調整</label>
+            </div>
             <select id="residual" onchange="toggleArea('residual', 'residualDetailArea')">
               <option value="なし">なし（処方通り）</option>
               <option value="あり（調整希望）">あり（余っている薬を調整したい）</option>
             </select>
             <div id="residualDetailArea" class="detail-area">
-              <span class="survey-label" style="font-size:11px;">余っている薬の詳細</span>
+              <span class="sub-label">余っている薬の詳細</span>
               <div id="residualList">
                 <div class="residual-item">
                   <input type="text" name="medName" class="input-text" placeholder="薬名 / Rp番号">
@@ -139,21 +332,31 @@
           </div>
 
           <div class="survey-group">
-            <label class="survey-label">配達の希望</label>
+            <div class="section-head">
+              <span class="section-icon teal">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 8H14V16H3V8Z" stroke="#3E96A2" stroke-width="1.6" stroke-linejoin="round"/>
+                  <path d="M14 11H17.5L20 14V16H14V11Z" stroke="#3E96A2" stroke-width="1.6" stroke-linejoin="round"/>
+                  <circle cx="7" cy="17.5" r="1.6" stroke="#3E96A2" stroke-width="1.5"/>
+                  <circle cx="16.5" cy="17.5" r="1.6" stroke="#3E96A2" stroke-width="1.5"/>
+                </svg>
+              </span>
+              <label class="survey-label">配達の希望</label>
+            </div>
             <select id="delivery" onchange="toggleDeliveryArea()">
               <option value="希望なし（薬局で受け取る）">希望なし（薬局で受け取る）</option>
               <option value="自宅へ配達希望（当日）">自宅へ配達希望（当日）</option>
               <option value="自宅へ配達希望（翌日以降）">自宅へ配達希望（翌日以降）</option>
             </select>
             <div id="deliveryDetailArea" class="detail-area">
-              <label class="survey-label" style="font-size:11px;">配達先住所</label>
+              <span class="sub-label">配達先住所</span>
               <input type="text" id="deliveryAddress" placeholder="初めてのご利用や配達先の変更の際にご入力ください。" style="margin-bottom:10px;">
               <div id="nextDayArea" style="display:none; margin-bottom:10px;">
                 <div class="caution-text">※日曜・祝日の配達は対応できません</div>
-                <label class="survey-label" style="font-size:11px;">希望日</label>
+                <span class="sub-label">希望日</span>
                 <input type="date" id="deliveryDate" style="margin-bottom:10px;">
               </div>
-              <label class="survey-label" style="font-size:11px;">希望時間帯</label>
+              <span class="sub-label">希望時間帯</span>
               <select id="deliveryTimeSelect" onchange="toggleDeliveryTimeInput()">
                 <option value="午前中">午前中</option>
                 <option value="午後">午後</option>
@@ -210,7 +413,16 @@
           </div>
 
           <div class="survey-group">
-            <label class="survey-label">調剤での要望</label>
+            <div class="section-head">
+              <span class="section-icon peach">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 5.5C4 4.67157 4.67157 4 5.5 4H18.5C19.3284 4 20 4.67157 20 5.5V14.5C20 15.3284 19.3284 16 18.5 16H10L6.5 19.5V16H5.5C4.67157 16 4 15.3284 4 14.5V5.5Z" stroke="#E8874A" stroke-width="1.6" stroke-linejoin="round"/>
+                  <path d="M8 8.5H16" stroke="#E8874A" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M8 11.5H13" stroke="#E8874A" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <label class="survey-label">調剤での要望</label>
+            </div>
             <select id="requestType" onchange="toggleRequestArea()">
               <option value="なし">なし</option>
               <option value="調剤に関して">調剤に関して</option>
@@ -228,15 +440,13 @@
       </div>
 
       <div id="successMessage">
-        <h2>
-          <span class="success-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="9.5" stroke="#00897b" stroke-width="1.6"/>
-              <path d="M8 12.3L10.6 15L16 9.5" stroke="#00897b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span>送信完了</span>
-        </h2>
+        <div class="success-icon-chip">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9.5" stroke="#5C9873" stroke-width="1.6"/>
+            <path d="M8 12.3L10.6 15L16 9.5" stroke="#5C9873" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2>送信完了</h2>
         <p>処方箋を受け付けました。<br>準備ができましたらご連絡いたします。<br>この画面を閉じてお待ちください。</p>
       </div>
     </div>
