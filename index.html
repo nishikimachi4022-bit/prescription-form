@@ -479,17 +479,72 @@
         .catch(function(err) { console.error("LIFF初期化失敗:", err); });
     }
 
-    function handleFileSelect(e) {
-      const files = Array.from(e.target.files);
-      files.forEach(function(file) {
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-          images.push({ base64: ev.target.result, name: file.name });
-          renderCarousel();
+    // ---------- 画像の読み込み（縮小・JPEG化してから表示・送信する） ----------
+    // 写真をそのまま表示すると、機種によってはデータが重すぎてプレビューが真っ黒になるため、
+    // 選んだ時点で長辺2400pxまでに縮小し、JPEGに変換する。向き（EXIF）も直す。
+    function decodeViaImg(file) {
+      return new Promise(function(resolve, reject) {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = function() {
+          resolve({ src: img, width: img.naturalWidth, height: img.naturalHeight, url: url });
         };
-        reader.readAsDataURL(file);
+        img.onerror = function() {
+          URL.revokeObjectURL(url);
+          reject(new Error('decode failed'));
+        };
+        img.src = url;
       });
+    }
+
+    function decodeImage(file) {
+      if (window.createImageBitmap) {
+        return createImageBitmap(file, { imageOrientation: 'from-image' })
+          .then(function(bmp) { return { src: bmp, width: bmp.width, height: bmp.height, url: null }; })
+          .catch(function() { return decodeViaImg(file); });
+      }
+      return decodeViaImg(file);
+    }
+
+    async function fileToJpegDataUrl(file) {
+      const MAX_EDGE = 2400;
+      const decoded = await decodeImage(file);
+      try {
+        const w = decoded.width, h = decoded.height;
+        if (!w || !h) throw new Error('no size');
+        const scale = Math.min(1, MAX_EDGE / Math.max(w, h));
+        const cw = Math.max(1, Math.round(w * scale));
+        const ch = Math.max(1, Math.round(h * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = cw;
+        canvas.height = ch;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, cw, ch);
+        ctx.drawImage(decoded.src, 0, 0, cw, ch);
+        return canvas.toDataURL('image/jpeg', 0.9);
+      } finally {
+        if (decoded.url) URL.revokeObjectURL(decoded.url);
+        if (decoded.src && decoded.src.close) decoded.src.close();
+      }
+    }
+
+    async function handleFileSelect(e) {
+      const files = Array.from(e.target.files);
       e.target.value = "";
+      let failed = 0;
+      for (const file of files) {
+        try {
+          const dataUrl = await fileToJpegDataUrl(file);
+          images.push({ base64: dataUrl, name: file.name });
+        } catch (err) {
+          failed++;
+        }
+      }
+      if (images.length > 0) renderCarousel();
+      if (failed > 0) {
+        alert("写真を読み込めませんでした。お手数ですが、カメラの設定で「HEIF（高効率）」をオフにして撮り直すか、写真を表示した画面のスクリーンショットを選んでください。");
+      }
     }
 
     document.getElementById('fileInputCamera').onchange = handleFileSelect;
